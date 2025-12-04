@@ -2,4 +2,4 @@
 
 Resource from(https://github.com/myssal/Reverse-1999-CN-Asset)
 
-Creating...
+This repository is used as a resource relay repository. If you want to visit the website, please click …
