@@ -38,6 +38,7 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             singlebg/storybg/story_atcg
+            singlebg/storybg/story_bg/bg
           sparse-checkout-cone-mode: true
 
       # D. 同步文件并为新文件启用 LFS 追踪
@@ -46,10 +47,15 @@ jobs:
           mkdir -p singlebg/storybg
           rsync -av --delete upstream/singlebg/storybg/story_atcg/ singlebg/storybg/story_atcg/
 
+          # 新增：同步 story_bg/bg
+          mkdir -p singlebg/storybg/story_bg
+          rsync -av --delete upstream/singlebg/storybg/story_bg/bg/ singlebg/storybg/story_bg/bg/
+
       - name: Track large assets with LFS
         run: |
           # 对新同步的 PNG 文件使用 LFS
           git lfs track "singlebg/storybg/story_atcg/**/*.png"
+          git lfs track "singlebg/storybg/story_bg/bg/**/*.png"
           git add .gitattributes
 
       # E. 调整 HTTP 缓冲，提交并推送
