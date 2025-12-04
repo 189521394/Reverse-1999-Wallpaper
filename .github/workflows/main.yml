@@ -68,7 +68,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # 添加并提交所有更新
-          git add singlebg/storybg/story_atcg
+          git add singlebg/storybg
           if git diff --cached --quiet; then
             echo "✅ No changes to commit"
           else
