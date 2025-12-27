@@ -1,84 +1,93 @@
 name: Sync storybg/story_atcg folder
 
-# 给 GITHUB_TOKEN 写权限
 permissions:
   contents: write
 
 on:
   schedule:
-    - cron: '0 0 * * *'      # 每天 UTC 00:00 同步
-  workflow_dispatch:        # 支持手动触发
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
   sync:
     runs-on: ubuntu-latest
-
+    
     steps:
-      # A. 签出你自己的仓库，用于 Commit & Push
+      # 1. 清理空间
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: false
+
+      # 2. 签出自己 (depth 1)
       - name: Checkout this repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0      # 全量历史，确保 LFS 正常工作
+          lfs: true       
+          fetch-depth: 1  
 
-      # B. 安装并初始化 Git LFS
+      # 3. 安装 LFS (通用)
       - name: Install Git LFS
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git-lfs
-          git lfs install --local
+        run: git lfs install --local
 
-      # C. 部分签出上游仓库，只拿 singlebg/storybg/story_atcg
-      - name: Checkout upstream repo (sparse)
+      # 4. 签出上游 (修正点：增加 lfs: true 以防万一)
+      - name: Checkout upstream repo (sparse & shallow)
         uses: actions/checkout@v3
         with:
           repository: myssal/Reverse-1999-CN-Asset
           token: ${{ secrets.GITHUB_TOKEN }}
           path: upstream
-          fetch-depth: 0
+          fetch-depth: 1
+          lfs: true            # 确保拉下来的是真图片
           persist-credentials: false
-          # 调整同步文件夹修改点1/3
           sparse-checkout: |
             singlebg/storybg/story_atcg
             singlebg/storybg/story_bg
             singlebg/storybg/bg
           sparse-checkout-cone-mode: true
 
-      # D. 同步文件并为新文件启用 LFS 追踪
-      # 调整同步文件夹修改点2/3
-      - name: Sync story_atcg directory
+      # 5. 同步 (清理 upstream)
+      - name: Sync directories
         run: |
-          mkdir -p singlebg/storybg
+          mkdir -p singlebg/storybg/story_atcg singlebg/storybg/story_bg singlebg/storybg/bg
+
           rsync -av --delete upstream/singlebg/storybg/story_atcg/ singlebg/storybg/story_atcg/
+          rsync -av --delete upstream/singlebg/storybg/story_bg/   singlebg/storybg/story_bg/
+          rsync -av --delete upstream/singlebg/storybg/bg/         singlebg/storybg/bg/
+          
+          rm -rf upstream
 
-          mkdir -p singlebg/storybg
-          rsync -av --delete upstream/singlebg/storybg/story_bg/ singlebg/storybg/story_bg/
-
-          mkdir -p singlebg/storybg
-          rsync -av --delete upstream/singlebg/storybg/bg/ singlebg/storybg/bg/
-
+      # 6. LFS 追踪 (修正点：改回只追踪图片，或者根据需要调整)
       - name: Track large assets with LFS
         run: |
-          # 对新同步的 PNG 文件使用 LFS
-          # 调整同步文件夹修改点3/3
-          git lfs track "singlebg/storybg/story_atcg/**/*.png"
-          git lfs track "singlebg/storybg/story_bg/**/*.png"
-          git lfs track "singlebg/storybg/bg/**/*.png"
+          # 只追踪png
+          git lfs track "singlebg/storybg/**/*.png"
+          
           git add .gitattributes
 
-      # E. 调整 HTTP 缓冲，提交并推送
+      # 7. 提交
       - name: Configure git and push
         run: |
-          # 增大 HTTP POST 缓冲，减少 push 中断风险
           git config --global http.postBuffer 524288000
-
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # 添加并提交所有更新
+          git status
+
+          # 修正点：明确指定添加的目录，防止意外
+          git add .gitattributes
           git add singlebg/storybg
+          
           if git diff --cached --quiet; then
             echo "✅ No changes to commit"
           else
-            git commit -m "chore: sync story_atcg from upstream"
+            echo "📦 Committing changes..."
+            git commit -m "chore: sync story assets from upstream"
             git push
           fi
