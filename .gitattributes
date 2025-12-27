@@ -1,3 +1,4 @@
 singlebg/storybg/story_atcg/**/*.png filter=lfs diff=lfs merge=lfs -text
 singlebg/storybg/story_bg/bg/**/*.png filter=lfs diff=lfs merge=lfs -text
 singlebg/storybg/bg/**/*.png filter=lfs diff=lfs merge=lfs -text
+singlebg/storybg/**/*.png filter=lfs diff=lfs merge=lfs -text
