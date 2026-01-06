@@ -49,17 +49,15 @@ jobs:
           sparse-checkout: |
             singlebg/storybg/story_atcg
             singlebg/storybg/story_bg
-            singlebg/storybg/bg
           sparse-checkout-cone-mode: true
 
       # 5. 同步 (清理 upstream)
       - name: Sync directories
         run: |
-          mkdir -p singlebg/storybg/story_atcg singlebg/storybg/story_bg singlebg/storybg/bg
+          mkdir -p singlebg/storybg/story_atcg singlebg/storybg/story_bg
 
           rsync -av --delete upstream/singlebg/storybg/story_atcg/ singlebg/storybg/story_atcg/
           rsync -av --delete upstream/singlebg/storybg/story_bg/   singlebg/storybg/story_bg/
-          rsync -av --delete upstream/singlebg/storybg/bg/         singlebg/storybg/bg/
           
           rm -rf upstream
 
