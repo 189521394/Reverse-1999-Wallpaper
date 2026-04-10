@@ -2,16 +2,23 @@ import os
 import concurrent.futures
 from PIL import Image
 
-# 1. 基础配置
+# 基础配置
 SOURCE_DIR = "singlebg"
 OUTPUT_DIR = "thumbnails"
 MAX_SIZE = (600, 600)
 
 # 定义单个图片的处理任务（这个函数会被分配给不同的 CPU 核心同时执行）
 def process_single_image(source_path, target_path):
-    # 防重复检查
+    # 防重复检查与更新检查
     if os.path.exists(target_path):
-        return "skipped"
+        # 获取原图和缩略图的最后修改时间
+        source_mtime = os.path.getmtime(source_path)
+        target_mtime = os.path.getmtime(target_path)
+
+        # 如果缩略图的时间戳 >= 原图的时间戳，说明不需要更新
+        if target_mtime >= source_mtime:
+            return "skipped"
+        # 否则，说明 target 存在但 source 较新，代码会继续往下走，覆盖旧的 webp
 
     try:
         # 确保目标文件夹存在
@@ -23,8 +30,7 @@ def process_single_image(source_path, target_path):
 
             img.thumbnail(MAX_SIZE, Image.Resampling.LANCZOS)
 
-            # 💡 极客提示：method=6 是 WebP 压缩率最高但也最耗时的算法。
-            # 如果你开启了多进程还是觉得慢，可以把它改成 method=4（默认值），速度会飙升，体积只大一丁点。
+            # method=6 是 WebP 压缩率最高但也最耗时的算法。
             img.save(target_path, format="WEBP", quality=80, method=6)
 
         return "success"
@@ -32,7 +38,7 @@ def process_single_image(source_path, target_path):
         return f"error: {source_path} - {e}"
 
 def compress_images():
-    print(f"🚀 开始执行 WebP 压缩任务...")
+    print(f"开始执行 WebP 压缩任务...")
 
     tasks = [] # 任务清单
 
@@ -57,7 +63,7 @@ def compress_images():
     max_workers = os.cpu_count() or 4
     print(f"使用核心： {max_workers}")
 
-    # 多进程线程池！
+    # 多进程线程池
     with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
         # 把任务分发给各个核心
         futures = [executor.submit(process_single_image, src, tgt) for src, tgt in tasks]
