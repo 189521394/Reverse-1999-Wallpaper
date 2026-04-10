@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1f961553-8d93-4770-aabd-eb76dd2594ae" name="更改" comment="恢复我自己修复的文件">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="1f961553-8d93-4770-aabd-eb76dd2594ae" name="更改" comment="更新脚本和目录">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/compress_bg.py" beforeDir="false" afterPath="$PROJECT_DIR$/compress_bg.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,7 +101,7 @@
       <workItem from="1771230192841" duration="334000" />
       <workItem from="1772801262512" duration="722000" />
       <workItem from="1774090574651" duration="3854000" />
-      <workItem from="1775827711024" duration="1794000" />
+      <workItem from="1775827711024" duration="1942000" />
     </task>
     <task id="LOCAL-00001" summary="添加python脚本">
       <option name="closed" value="true" />
@@ -112,7 +111,15 @@
       <option name="project" value="LOCAL" />
       <updated>1774097313408</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="更新脚本和目录">
+      <option name="closed" value="true" />
+      <created>1775829711775</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1775829711775</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -131,6 +138,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="添加python脚本" />
-    <option name="LAST_COMMIT_MESSAGE" value="添加python脚本" />
+    <MESSAGE value="更新脚本和目录" />
+    <option name="LAST_COMMIT_MESSAGE" value="更新脚本和目录" />
   </component>
 </project>
